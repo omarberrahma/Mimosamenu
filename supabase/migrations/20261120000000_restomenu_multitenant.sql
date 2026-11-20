@@ -189,12 +189,21 @@ create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
 set search_path = ''
-as $$
+as $
 begin
   new.updated_at = now();
   return new;
 end;
-$$;
+$;
+
+-- Prevent direct RPC execution of trigger-only functions and keep helper access explicit.
+revoke all on function public.handle_new_user() from public, anon, authenticated;
+revoke all on function public.set_updated_at() from public, anon, authenticated;
+revoke all on function private.is_master_admin() from public, anon, authenticated;
+revoke all on function private.can_access_restaurant(uuid) from public, anon, authenticated;
+revoke all on function private.can_manage_restaurant(uuid) from public, anon, authenticated;
+revoke all on function private.restaurant_is_active(uuid) from public, anon, authenticated;
+revoke all on function private.category_is_public(uuid) from public, anon, authenticated;
 
 drop trigger if exists profiles_set_updated_at on public.profiles;
 create trigger profiles_set_updated_at before update on public.profiles
@@ -240,7 +249,7 @@ grant update (display_name) on public.profiles to authenticated;
 grant select on public.restaurants to anon, authenticated;
 grant insert, update, delete on public.restaurants to authenticated;
 
-grant select on public.restaurant_members to authenticated;
+grant select, insert, update, delete on public.restaurant_members to authenticated;
 
 grant select on public.menu_categories, public.menu_items to anon, authenticated;
 grant insert, update, delete on public.menu_categories, public.menu_items to authenticated;
