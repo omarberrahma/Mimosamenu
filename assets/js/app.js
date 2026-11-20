@@ -6,11 +6,15 @@ let modalSelectedExtras = [];
 let modalQuantity = 1;
 
 window.addEventListener('DOMContentLoaded', async () => {
-  if (typeof window.loadRestaurantMenu === 'function') {
-    await window.loadRestaurantMenu();
+  const canRenderMenu = typeof window.loadRestaurantMenu === 'function'
+    ? await window.loadRestaurantMenu()
+    : true;
+
+  if (canRenderMenu !== false) {
+    renderCategoryBar();
+    renderMenu();
   }
-  renderCategoryBar();
-  renderMenu();
+
   updateStaticTexts();
   lucide.createIcons();
 });
