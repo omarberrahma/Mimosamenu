@@ -5,89 +5,92 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#0b1220" />
-  <title>RestoMenu Master — Vue d’ensemble</title>
+  <title>RestoMenu Master — Administration</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b1220;color:#f8fafc}.panel{background:#111c2e;border:1px solid rgba(148,163,184,.12)}.muted{color:#8fa1b8}</style>
+  <style>
+    body{font-family:'Plus Jakarta Sans',sans-serif;background:#0b1220;color:#f8fafc}
+    .panel{background:#111c2e;border:1px solid rgba(148,163,184,.12)}
+    .muted{color:#8fa1b8}
+    input{color-scheme:dark}
+  </style>
 </head>
 <body class="min-h-screen">
-  <div class="min-h-screen lg:grid lg:grid-cols-[250px_1fr]">
-    <aside class="bg-[#0e1828] border-r border-slate-800/80 px-5 py-6 flex flex-col">
-      <a href="/" class="flex items-center gap-3 mb-10">
-        <span class="w-10 h-10 rounded-xl bg-emerald-400 text-slate-950 grid place-items-center font-extrabold text-lg">R</span>
-        <span class="text-xl font-extrabold">resto<span class="text-emerald-400">menu</span></span>
+  <main class="max-w-7xl mx-auto px-5 md:px-8 py-8">
+    <header class="flex items-center justify-between gap-4 mb-10">
+      <a href="/" class="flex items-center gap-3">
+        <span class="w-11 h-11 rounded-xl bg-emerald-400 text-slate-950 grid place-items-center font-extrabold text-xl">R</span>
+        <span class="text-2xl font-extrabold">resto<span class="text-emerald-400">menu</span></span>
       </a>
-      <p class="text-[10px] font-bold tracking-[.2em] text-slate-500 mb-3">MASTER WORKSPACE</p>
-      <nav class="space-y-2 text-sm">
-        <a href="#overview" class="flex items-center gap-3 px-3 py-3 rounded-xl bg-emerald-400/10 text-emerald-300 font-semibold">▦ <span>Vue d’ensemble</span></a>
-        <a href="#restaurants" class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-400 hover:bg-slate-800/70">⌂ <span>Restaurants</span></a>
-        <span class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600">▤ <span>Commandes</span><small class="ml-auto">Bientôt</small></span>
-        <span class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-600">⚙ <span>Paramètres</span><small class="ml-auto">Bientôt</small></span>
-      </nav>
-      <div class="mt-auto panel rounded-2xl p-4">
-        <p class="text-xs font-semibold text-slate-300">Compte Master</p>
-        <p class="text-xs muted mt-1">RestoMenu · Super Admin</p>
-        <p class="text-[11px] text-amber-300 mt-3">Authentification à configurer</p>
+      <a href="/" class="text-sm text-slate-400 hover:text-white">Accueil ↗</a>
+    </header>
+
+    <section id="setup-notice" class="hidden border border-amber-400/20 bg-amber-400/5 rounded-2xl p-4 text-sm text-amber-200 mb-6" role="status"></section>
+
+    <section id="login-panel" class="max-w-md mx-auto panel rounded-3xl p-7 md:p-9 mt-10">
+      <div class="w-12 h-12 rounded-2xl bg-emerald-400/10 text-emerald-300 grid place-items-center text-2xl mb-6">⌘</div>
+      <p class="text-xs font-bold tracking-[.2em] text-emerald-300">ESPACE SÉCURISÉ</p>
+      <h1 class="text-3xl font-extrabold mt-2">Master Login</h1>
+      <p class="muted text-sm leading-6 mt-3 mb-7">Connectez-vous avec le compte Master créé dans Supabase. L’inscription publique est désactivée pour cet espace.</p>
+      <form id="login-form" class="space-y-4">
+        <label class="block text-sm font-semibold">Adresse e-mail
+          <input id="master-email" type="email" autocomplete="username" required class="mt-2 w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 outline-none focus:border-emerald-400" placeholder="master@example.com">
+        </label>
+        <label class="block text-sm font-semibold">Mot de passe
+          <input id="master-password" type="password" autocomplete="current-password" required class="mt-2 w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 outline-none focus:border-emerald-400" placeholder="••••••••••">
+        </label>
+        <button type="submit" class="w-full rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold py-3.5 transition">Se connecter</button>
+      </form>
+      <p id="login-error" class="hidden text-sm mt-4" role="alert"></p>
+      <p class="text-xs text-slate-500 leading-5 mt-7">Accès réservé à l’administrateur principal de la plateforme.</p>
+    </section>
+
+    <section id="dashboard" class="hidden">
+      <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+        <div><p class="text-xs font-bold tracking-[.18em] text-emerald-300">MASTER WORKSPACE</p><h1 class="text-3xl md:text-4xl font-extrabold mt-2">Vue d’ensemble</h1><p class="muted text-sm mt-2">Gérez les espaces restaurants depuis une seule interface.</p></div>
+        <div class="flex items-center gap-3"><span id="status-line" class="text-xs muted"></span><button id="logout-button" class="border border-slate-700 hover:border-rose-400/50 rounded-xl px-4 py-2.5 text-sm transition">Déconnexion</button></div>
       </div>
-    </aside>
 
-    <main class="min-w-0">
-      <header class="border-b border-slate-800/80 px-5 md:px-9 py-5 flex flex-wrap items-center justify-between gap-3">
-        <div><p class="text-xs muted">RestoMenu / Master</p><p class="font-semibold mt-1">Espace de contrôle central</p></div>
-        <div class="flex items-center gap-3">
-          <span class="text-[11px] rounded-full border border-amber-400/20 bg-amber-400/10 text-amber-300 px-3 py-2">APERÇU — NON SÉCURISÉ</span>
-          <a href="/" class="text-sm text-slate-400 hover:text-white">Accueil ↗</a>
-        </div>
-      </header>
-
-      <div class="px-5 md:px-9 py-8 max-w-7xl mx-auto">
-        <section id="overview" class="mb-8">
-          <p class="text-xs font-bold tracking-[.18em] text-emerald-300">MASTER DASHBOARD</p>
-          <div class="flex flex-wrap items-end justify-between gap-4 mt-2">
-            <div><h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Vue d’ensemble</h1><p class="muted mt-2 text-sm">Gérez la plateforme et ses espaces restaurants depuis un seul endroit.</p></div>
-            <span class="panel rounded-xl px-4 py-2 text-xs muted">Version initiale · Interface de démonstration</span>
-          </div>
-        </section>
-
-        <div class="border border-amber-400/20 bg-amber-400/5 rounded-2xl p-4 md:p-5 mb-8">
-          <p class="text-sm font-bold text-amber-200">Important : aperçu uniquement</p>
-          <p class="text-xs md:text-sm text-amber-100/70 leading-6 mt-1">Cette page présente la future interface Master. Les comptes, les rôles, les données partagées et les actions d’administration ne sont pas encore connectés à une authentification sécurisée ni à une base de données.</p>
-        </div>
-
-        <section class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-10">
-          <article class="panel rounded-2xl p-5"><p class="text-xs muted">Restaurants configurés</p><p class="text-3xl font-extrabold mt-3">01</p><p class="text-xs text-emerald-300 mt-2">Mimosa est le premier espace</p></article>
-          <article class="panel rounded-2xl p-5"><p class="text-xs muted">Commandes enregistrées</p><p class="text-3xl font-extrabold mt-3">—</p><p class="text-xs muted mt-2">Connexion backend requise</p></article>
-          <article class="panel rounded-2xl p-5"><p class="text-xs muted">Comptes restaurants</p><p class="text-3xl font-extrabold mt-3">—</p><p class="text-xs muted mt-2">Gestion des accès à construire</p></article>
-          <article class="panel rounded-2xl p-5"><p class="text-xs muted">État du système</p><p class="text-xl font-extrabold mt-4 text-amber-300">Prototype</p><p class="text-xs muted mt-2">Phase de structuration</p></article>
-        </section>
-
-        <section id="restaurants" class="panel rounded-2xl overflow-hidden">
-          <div class="px-5 md:px-6 py-5 border-b border-slate-700/70 flex flex-wrap justify-between items-center gap-3">
-            <div><h2 class="text-lg font-bold">Restaurants</h2><p class="text-xs muted mt-1">Espaces présents dans le projet</p></div>
-            <span class="text-xs rounded-lg bg-slate-800 px-3 py-2 text-slate-400">Ajout de restaurant : prochaine étape</span>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm min-w-[600px]">
-              <thead class="text-xs uppercase tracking-wider text-slate-500 bg-slate-900/40"><tr><th class="px-5 py-4">Restaurant</th><th class="px-5 py-4">Identifiant</th><th class="px-5 py-4">Espace menu</th><th class="px-5 py-4">État</th><th class="px-5 py-4">Accès</th></tr></thead>
-              <tbody><tr class="border-t border-slate-800">
-                <td class="px-5 py-5"><div class="font-bold">Mimosa Brunch & Drunch</div><div class="text-xs muted mt-1">Premier restaurant de la plateforme</div></td>
-                <td class="px-5 py-5 font-mono text-xs text-slate-300">mimosa</td>
-                <td class="px-5 py-5"><a href="/mimosa" class="text-emerald-300 hover:text-emerald-200 font-semibold">Ouvrir le menu ↗</a></td>
-                <td class="px-5 py-5"><span class="rounded-full bg-amber-400/10 text-amber-300 px-3 py-1.5 text-xs">Configuré dans le code</span></td>
-                <td class="px-5 py-5 text-xs muted">Admin à connecter</td>
-              </tr></tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="grid md:grid-cols-2 gap-4 mt-6">
-          <article class="panel rounded-2xl p-5"><p class="text-xs text-emerald-300 font-bold">ÉTAPE SUIVANTE</p><h3 class="font-bold mt-2">Authentification Master</h3><p class="text-sm muted leading-6 mt-2">Créer une vraie connexion sécurisée, des rôles et des permissions avant d’activer les outils d’administration.</p></article>
-          <article class="panel rounded-2xl p-5"><p class="text-xs text-emerald-300 font-bold">ARCHITECTURE</p><h3 class="font-bold mt-2">Base multi-restaurants</h3><p class="text-sm muted leading-6 mt-2">Isoler les données de chaque restaurant : menus, produits, commandes et comptes administrateurs.</p></article>
-        </section>
+      <div class="grid sm:grid-cols-3 gap-4 mb-8">
+        <article class="panel rounded-2xl p-5"><p class="text-xs muted">Restaurants</p><p id="restaurant-count" class="text-3xl font-extrabold mt-3">—</p></article>
+        <article class="panel rounded-2xl p-5"><p class="text-xs muted">Restaurants actifs</p><p id="active-count" class="text-3xl font-extrabold mt-3 text-emerald-300">—</p></article>
+        <article class="panel rounded-2xl p-5"><p class="text-xs muted">Restaurants inactifs</p><p id="inactive-count" class="text-3xl font-extrabold mt-3">—</p></article>
       </div>
-    </main>
-  </div>
+
+      <section class="panel rounded-2xl p-5 md:p-6 mb-6">
+        <div class="mb-5"><h2 class="text-lg font-bold">Ajouter un restaurant</h2><p class="text-xs muted mt-1">Crée l’espace du restaurant dans la base. La gestion du compte administrateur et la page publique dédiée seront activées dans les prochaines étapes.</p></div>
+        <form id="restaurant-form" class="grid md:grid-cols-3 gap-3 items-end">
+          <label class="text-xs font-semibold">Nom du restaurant
+            <input id="restaurant-name" required maxlength="100" class="mt-2 w-full rounded-xl bg-slate-950 border border-slate-700 px-3 py-3 outline-none focus:border-emerald-400" placeholder="Ex. Dar Lben">
+          </label>
+          <label class="text-xs font-semibold">Identifiant URL
+            <input id="restaurant-slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxlength="60" class="mt-2 w-full rounded-xl bg-slate-950 border border-slate-700 px-3 py-3 outline-none focus:border-emerald-400" placeholder="dar-lben">
+          </label>
+          <label class="text-xs font-semibold">Description (facultatif)
+            <input id="restaurant-description" maxlength="240" class="mt-2 w-full rounded-xl bg-slate-950 border border-slate-700 px-3 py-3 outline-none focus:border-emerald-400" placeholder="Type de restaurant">
+          </label>
+          <div class="md:col-span-3 flex flex-wrap items-center gap-4">
+            <button id="create-restaurant-button" type="submit" class="rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold px-5 py-3 transition">Ajouter le restaurant</button>
+            <p id="restaurant-message" class="hidden text-sm" role="status"></p>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel rounded-2xl overflow-hidden">
+        <div class="px-5 md:px-6 py-5 border-b border-slate-700/70"><h2 class="text-lg font-bold">Tous les restaurants</h2><p class="text-xs muted mt-1">Chaque restaurant est isolé par un identifiant unique.</p></div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm min-w-[650px]">
+            <thead class="text-xs uppercase tracking-wider text-slate-500 bg-slate-900/40"><tr><th class="px-5 py-4">Restaurant</th><th class="px-5 py-4">Slug</th><th class="px-5 py-4">Menu public</th><th class="px-5 py-4">État</th><th class="px-5 py-4">Données</th></tr></thead>
+            <tbody id="restaurants-body"><tr><td colspan="5" class="px-5 py-8 text-center text-slate-400">Chargement…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+      <p class="text-xs text-slate-500 leading-5 mt-6">La sécurité des données est appliquée par les politiques RLS de PostgreSQL. Les comptes restaurant, les éditeurs de menu et les commandes seront ajoutés aux modules suivants.</p>
+    </section>
+  </main>
+  <script src="/assets/js/root-admin.js"></script>
 </body>
 </html>
