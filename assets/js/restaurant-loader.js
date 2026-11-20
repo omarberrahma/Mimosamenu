@@ -102,7 +102,18 @@ window.loadRestaurantMenu = async function loadRestaurantMenu() {
     const footerBrand = document.getElementById('footer-restaurant-name');
     if (brand) brand.textContent = restaurant.name;
     if (footerBrand) footerBrand.textContent = restaurant.name;
+    const typeBadge = document.getElementById('restaurant-type-badge');
+    if (typeBadge) typeBadge.textContent = slug === 'mimosa' ? 'Brunch & Drunch' : 'Menu en ligne';
     document.title = restaurant.name + ' | Menu en ligne — RestoMenu';
+
+    if (slug !== 'mimosa') {
+      const heroTitle = document.getElementById('hero-title');
+      const heroBadge = document.getElementById('hero-badge');
+      const heroSubtitle = document.getElementById('hero-subtitle');
+      if (heroTitle) heroTitle.textContent = restaurant.name;
+      if (heroBadge) heroBadge.textContent = 'Menu officiel';
+      if (heroSubtitle) heroSubtitle.textContent = restaurant.description || 'Découvrez notre menu, nos spécialités et nos offres.';
+    }
 
     if (restaurant.description) {
       const subtitle = document.getElementById('hero-subtitle');
