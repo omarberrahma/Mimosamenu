@@ -7,6 +7,7 @@ RestoMenu is the platform brand. Each restaurant keeps its own identity and publ
 - **RestoMenu platform homepage:** `/`
 - **Master login and workspace:** `/root`
 - **Mimosa Brunch & Drunch public menu:** `/mimosa`
+- **Any restaurant public menu:** `/:restaurantSlug` (for example `/dar-lben`)
 - **Mimosa kitchen display (legacy):** `/mimosa/admin`
 
 ## Product model
@@ -18,7 +19,9 @@ RestoMenu is the platform brand. Each restaurant keeps its own identity and publ
 
 ## Database and access control
 
-The Supabase migration is in `supabase/migrations/20261120000000_restomenu_multitenant.sql`.
+The Supabase migrations are in `supabase/migrations/`:
+- `20261120000000_restomenu_multitenant.sql` creates tenants, user profiles, memberships, menus and RLS policies.
+- `20261120010000_seed_mimosa_menu.sql` imports Mimosa's current 4 categories and 12 menu products.
 
 It creates:
 - user profiles and Master role,
@@ -37,9 +40,9 @@ The Master workspace uses Supabase Auth. It verifies the signed-in user's `profi
 - Restaurant list and record creation: implemented after Supabase setup.
 - Base tenant schema and RLS: implemented in the migration.
 - Restaurant-admin invitations and account assignment: not yet implemented.
-- Dynamic public menus for every restaurant slug: not yet implemented.
+- Dynamic `/:restaurantSlug` route and public menu loading from Supabase: implemented after running both migrations and adding menu records for each tenant.
 - Menu editor and order management: not yet implemented.
-- Existing Mimosa menu is still driven by its original JavaScript data file while the migration establishes the database model.
+- Mimosa's current menu is seeded into Supabase by the second migration; its original JavaScript menu remains a fallback when Supabase is not configured or the database menu is empty.
 
 ## Existing menu features
 
