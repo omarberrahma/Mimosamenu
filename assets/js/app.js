@@ -5,9 +5,16 @@ let activeModalItem = null;
 let modalSelectedExtras = [];
 let modalQuantity = 1;
 
-window.addEventListener('DOMContentLoaded', () => {
-  renderCategoryBar();
-  renderMenu();
+window.addEventListener('DOMContentLoaded', async () => {
+  const canRenderMenu = typeof window.loadRestaurantMenu === 'function'
+    ? await window.loadRestaurantMenu()
+    : true;
+
+  if (canRenderMenu !== false) {
+    renderCategoryBar();
+    renderMenu();
+  }
+
   updateStaticTexts();
   lucide.createIcons();
 });
