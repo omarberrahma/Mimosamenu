@@ -55,4 +55,4 @@ Redéployez ensuite Vercel pour appliquer les variables.
 
 ## Sécurité
 
-Le client Supabase utilise uniquement une clé publishable/anon. Ne stockez pas `service_role`, mots المرور ou secrets dans GitHub, HTML, ou JavaScript côté client. RLS est la barrière de sécurité réelle pour les données exposées.
+Le client Supabase utilise uniquement une clé publishable/anon. Ne stockez pas `service_role`, mots de passe ou secrets dans GitHub, HTML, ou JavaScript côté client. RLS est la barrière de sécurité réelle pour les données exposées.
