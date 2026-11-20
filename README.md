@@ -1,26 +1,37 @@
-# Mimosa Brunch & Drunch
+# RestoMenu — Online Menu Platform
 
-Interactive web menu for Mimosa Brunch & Drunch, supporting dine-in and delivery orders.
+RestoMenu is the platform brand. Each restaurant keeps its own identity and public menu.
 
-## Architecture
+## Current structure
 
-- **`public/`**: Contains the main interactive menu (`index.html`), order tracking UI, and SEO files.
-- **`admin/`**: Contains mock UI for Kitchen Display System and Admin login.
-- **`assets/`**:
-  - **`css/`**: Custom styles and tailwind configs.
-  - **`js/`**: Modularized scripts containing menu data, cart logic, WhatsApp dispatch, and API calls.
-- **`api/`**: Serverless functions intended for Vercel deployment (e.g. `/api/orders`).
+- **RestoMenu platform homepage:** `/`
+- **Master workspace preview:** `/root`
+- **Mimosa Brunch & Drunch public menu:** `/mimosa`
+- **Mimosa kitchen display:** `/mimosa/admin` (legacy route: `/admin`)
+- **Restaurant configuration:** `assets/js/menu-data.js`
+- **Menu UI:** `public/index.html`
+- **Serverless order endpoint:** `api/orders.js`
+
+## Product model
+
+- **Platform:** RestoMenu
+- **Master role:** controls the platform and all restaurant workspaces.
+- **Restaurant:** an independent tenant with its own slug, menu, branding, contact details and future admin account.
+- **First restaurant:** Mimosa Brunch & Drunch, slug `mimosa`.
+
+## Important implementation status
+
+The current Master page is a **visual preview only**. Authentication, role-based authorization, database persistence, tenant isolation, restaurant creation and real order management are not yet implemented. Do not use the preview route as a secure administration system.
+
+The existing Mimosa menu remains the customer-facing restaurant experience. RestoMenu is now the platform identity, not the restaurant name.
 
 ## Deployment
 
-This app is optimized for Vercel.
+The project is configured for Vercel. Rewrites are defined in `vercel.json`.
 
-1. Ensure the Vercel CLI is installed.
-2. Run `vercel` from the root directory.
-3. The routing configuration is provided in `vercel.json`.
+## Existing menu features
 
-## Features
-- Modular JS architecture (Menu Data, Cart, WhatsApp integration).
-- Multi-lingual support (FR, EN, AR) with RTL capability.
-- Quick order dispatch to a targeted WhatsApp line.
-- Ready API endpoint integration for backend order processing.
+- French, Arabic and English menu interface, including RTL support.
+- Menu categories, product customization and cart.
+- WhatsApp order dispatch.
+- Initial API endpoint structure for future order processing.

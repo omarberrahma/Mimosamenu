@@ -6,28 +6,48 @@
       "destination": "/assets/$1"
     },
     {
-      "source": "/admin/(.*)",
-      "destination": "/admin/$1"
-    },
-    {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     },
     {
-      "source": "/order-status",
-      "destination": "/public/order-status.html"
+      "source": "/root/(.*)",
+      "destination": "/root/$1"
     },
     {
-      "source": "/admin",
+      "source": "/mimosa/admin/login",
+      "destination": "/admin/login.html"
+    },
+    {
+      "source": "/mimosa/admin",
       "destination": "/admin/index.html"
+    },
+    {
+      "source": "/admin/(.*)",
+      "destination": "/admin/$1"
     },
     {
       "source": "/admin/login",
       "destination": "/admin/login.html"
     },
     {
-      "source": "/",
+      "source": "/admin",
+      "destination": "/admin/index.html"
+    },
+    {
+      "source": "/order-status",
+      "destination": "/public/order-status.html"
+    },
+    {
+      "source": "/mimosa",
       "destination": "/public/index.html"
+    },
+    {
+      "source": "/root",
+      "destination": "/root/index.html"
+    },
+    {
+      "source": "/",
+      "destination": "/restomenu/index.html"
     },
     {
       "source": "/(.*)",

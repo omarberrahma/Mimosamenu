@@ -1,5 +1,8 @@
 const RESTAURANT_CONFIG = {
-  name: "mimosa brunch and drunch",
+  id: "mimosa",
+  slug: "mimosa",
+  name: "Mimosa Brunch & Drunch",
+  platform: "RestoMenu",
   whatsappNumber: "213562163900", // Target Algerian WhatsApp line
   currency: "دج",
 };
