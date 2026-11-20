@@ -1,7 +1,7 @@
 window.loadRestaurantMenu = async function loadRestaurantMenu() {
-  const pathParts = window.location.pathname.split('/').filter(Boolean);
-  const slug = pathParts[0] || 'mimosa';
-  const isMimosaFallback = slug === 'mimosa';
+  const slug = window.location.pathname.split('/').filter(Boolean)[0] || 'mimosa';
+  const useStaticMimosaMenu = slug === 'mimosa';
+
   const unavailable = (message) => {
     document.getElementById('category-bar').innerHTML = '';
     document.getElementById('menu-container').innerHTML =
@@ -12,17 +12,21 @@ window.loadRestaurantMenu = async function loadRestaurantMenu() {
       '</div>';
   };
 
+  const fallbackOrStop = (message) => {
+    if (useStaticMimosaMenu) return true;
+    unavailable(message);
+    return false;
+  };
+
   try {
     const configResponse = await fetch('/api/config', { cache: 'no-store' });
     if (!configResponse.ok) {
-      if (!isMimosaFallback) unavailable('Ce restaurant n’a pas encore de menu publié.');
-      return;
+      return fallbackOrStop('La plateforme n’est pas encore connectée à sa base de données.');
     }
 
     const config = await configResponse.json();
     if (!config.supabaseUrl || !config.supabaseKey || !window.supabase) {
-      if (!isMimosaFallback) unavailable('La plateforme n’est pas encore connectée à sa base de données.');
-      return;
+      return fallbackOrStop('La plateforme n’est pas encore connectée à sa base de données.');
     }
 
     const client = window.supabase.createClient(config.supabaseUrl, config.supabaseKey, {
@@ -31,14 +35,13 @@ window.loadRestaurantMenu = async function loadRestaurantMenu() {
 
     const { data: restaurant, error: restaurantError } = await client
       .from('restaurants')
-      .select('id, slug, name, description, logo_url, cover_url, whatsapp_number, currency, is_active')
+      .select('id, slug, name, description, whatsapp_number, currency, is_active')
       .eq('slug', slug)
       .eq('is_active', true)
       .maybeSingle();
 
     if (restaurantError || !restaurant) {
-      if (!isMimosaFallback) unavailable('Ce lien ne correspond à aucun restaurant actif.');
-      return;
+      return fallbackOrStop('Ce lien ne correspond à aucun restaurant actif.');
     }
 
     const [categoriesResult, itemsResult] = await Promise.all([
@@ -55,14 +58,12 @@ window.loadRestaurantMenu = async function loadRestaurantMenu() {
     ]);
 
     if (categoriesResult.error || itemsResult.error) {
-      if (!isMimosaFallback) unavailable('Impossible de charger le menu pour le moment.');
-      return;
+      return fallbackOrStop('Impossible de charger le menu pour le moment.');
     }
 
-    // Mimosa keeps its existing static menu until its current products are migrated.
+    // Keep Mimosa's current static data until those products are migrated to Supabase.
     if (!categoriesResult.data.length || !itemsResult.data.length) {
-      if (!isMimosaFallback) unavailable('Le menu de ce restaurant est en cours de préparation.');
-      return;
+      return fallbackOrStop('Le menu de ce restaurant est en cours de préparation.');
     }
 
     const allCategory = {
@@ -70,11 +71,13 @@ window.loadRestaurantMenu = async function loadRestaurantMenu() {
       icon: 'utensils',
       name: { fr: 'Tout le Menu', ar: 'القائمة كاملة', en: 'Full Menu' }
     };
+
     const mappedCategories = categoriesResult.data.map((category) => ({
       id: category.id,
       icon: category.icon || 'utensils',
       name: category.name || {}
     }));
+
     const mappedItems = itemsResult.data.map((item) => ({
       id: item.id,
       categoryId: item.category_id,
@@ -93,7 +96,7 @@ window.loadRestaurantMenu = async function loadRestaurantMenu() {
     RESTAURANT_CONFIG.slug = restaurant.slug;
     RESTAURANT_CONFIG.name = restaurant.name;
     RESTAURANT_CONFIG.whatsappNumber = restaurant.whatsapp_number || '';
-    RESTAURANT_CONFIG.currency = restaurant.currency || 'DZD';
+    RESTAURANT_CONFIG.currency = restaurant.currency === 'DZD' ? 'دج' : (restaurant.currency || 'دج');
 
     const brand = document.getElementById('restaurant-brand-name');
     const footerBrand = document.getElementById('footer-restaurant-name');
@@ -105,8 +108,10 @@ window.loadRestaurantMenu = async function loadRestaurantMenu() {
       const subtitle = document.getElementById('hero-subtitle');
       if (subtitle) subtitle.textContent = restaurant.description;
     }
+
+    return true;
   } catch (error) {
     console.error('RestoMenu menu loading failed:', error);
-    if (!isMimosaFallback) unavailable('Une erreur est survenue pendant le chargement du menu.');
+    return fallbackOrStop('Une erreur est survenue pendant le chargement du menu.');
   }
 };
