@@ -5,7 +5,10 @@ let activeModalItem = null;
 let modalSelectedExtras = [];
 let modalQuantity = 1;
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+  if (typeof window.loadRestaurantMenu === 'function') {
+    await window.loadRestaurantMenu();
+  }
   renderCategoryBar();
   renderMenu();
   updateStaticTexts();
