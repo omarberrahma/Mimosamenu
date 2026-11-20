@@ -50,6 +50,10 @@
       "destination": "/restomenu/index.html"
     },
     {
+      "source": "/:restaurantSlug",
+      "destination": "/public/index.html?restaurant=:restaurantSlug"
+    },
+    {
       "source": "/(.*)",
       "destination": "/public/$1"
     }
