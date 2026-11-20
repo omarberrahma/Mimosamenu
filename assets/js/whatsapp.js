@@ -11,6 +11,11 @@ function validateCustomerInfo() {
 }
 
 function submitOrderViaWhatsApp() {
+  if (!RESTAURANT_CONFIG.whatsappNumber) {
+    showToast("Ce restaurant n’a pas encore configuré son numéro WhatsApp.", 'alert-circle', true);
+    return;
+  }
+
   if (cart.length === 0) {
     showToast(TRANSLATIONS[currentLang].emptyCart, 'alert-circle', true);
     return;
